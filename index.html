@@ -1,0 +1,114 @@
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+<script>
+$(function(){
+	/*
+	* ルーレット.
+	*/
+	var randomChange = function(arr){
+		var item = arr[ Math.floor( Math.random() * arr.length )];
+		//console.log(item);
+		$("#result").text(item);
+	}
+	var intervalId = null;
+	var items = [];
+
+	$("#start").click(function(){
+		if (intervalId) {return false;};
+		var tmp = $("#items").val().split(/\r\n|\r|\n/); //itemsを設定.
+		for( var i=0; i<tmp.length; i++ ){
+			if( tmp[i].replace(/\s/g,"") != "" ){ items.push(tmp[i]) } //空文字チェック.
+		}
+		if (items.length == 0) {alert("アイテムが入力されていません"); return false;};
+		$("#shutyu").hide();
+		intervalId = setInterval( function(){ randomChange(items); }, 100);
+	});
+	$("#stop").click(function(){
+		clearInterval( intervalId );
+		intervalId = null;
+		items = [];
+		$("#shutyu").show();
+	});
+
+
+	/*
+	* タイトル編集.
+	*/
+	$('h1').click(function(){
+		if(!$(this).hasClass('on')){
+			$(this).addClass('on');
+			var txt = $(this).text();
+			$(this).html('<input type="text" value="'+txt+'" />');
+			$('h1 > input').focus().blur(function(){
+				var inputVal = $(this).val();
+				if(inputVal===''){
+					inputVal = this.defaultValue;
+				};
+				$(this).parent().removeClass('on').text(inputVal);
+			});
+		};
+	});
+
+});
+</script>
+
+<style>
+#wrap {
+	width: 960px;
+}
+#stage {
+	position: relative;
+	width: 800px;
+	height: 700px;
+	float: right;
+	border: 1px solid #ccc;
+}
+#stage #shutyu {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: none;
+}
+#stage #result {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	font-size: 120px;
+	margin:0;
+	top: 290px;
+}
+#config {
+	width: 150px;
+	float: left;
+}
+#config textarea {
+	height: 350px;
+	width: 150px;
+}
+</style>
+</head>
+<body>
+
+<h1>ルーレット</h1>
+
+<div id="wrap">
+	<div id="config">
+		<p>
+			<input id="start" type="button" value="スタート">
+			<input id="stop" type="button" value="ストップ">
+		</p>
+		<p>
+			<textarea id="items" placeholder="改行区切りでアイテムを入力"></textarea>
+		<p>
+	</div>
+	<div id="stage">
+		<img src="shutyu.png" id="shutyu">
+		<p id="result"></p>
+	</div>
+</div>
+
+</body>
+</html>
